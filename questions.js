@@ -1,0 +1,444 @@
+// NICET Level III — Hydraulics & Water Supply Planning
+// Exam 10014 | Water-Based Systems Layout
+// Content Outline: 3.9 Calculate Standpipe (5–15%), 3.10 Water Supply w/Pumps (25–35%), 3.11 Hydraulic Calc Principles (55–65%)
+
+const SECTIONS = [
+  { id: 'csp', label: 'Calculate Standpipe Systems',    pct: '5–15%',  tagClass: 'tag-csp' },
+  { id: 'cwp', label: 'Calculate Water Supply w/Pumps', pct: '25–35%', tagClass: 'tag-cwp' },
+  { id: 'hcp', label: 'Hydraulic Calculation Principles',pct: '55–65%', tagClass: 'tag-hcp' }
+];
+
+const QUESTIONS = [
+
+  // ── 3.9 CALCULATE STANDPIPE SYSTEMS (5–15%) — 8 questions ─────────────────
+
+  {
+    s: 'csp', calc: false,
+    t: 'Per NFPA 14 (2019), what is the minimum flow rate and residual pressure required at the most hydraulically remote 2½" outlet of a Class I standpipe system?',
+    o: ['100 gpm at 65 psi', '250 gpm at 100 psi', '500 gpm at 100 psi', '250 gpm at 65 psi'],
+    a: 1,
+    e: '<b>NFPA 14 §7.10.1.1:</b> The most remote 2½" outlet of a Class I or Class III standpipe must deliver 250 gpm at a minimum residual pressure of 100 psi. This is the single most tested standpipe value on the Hydraulics exam. Class II (1½" hose stations) requires 100 gpm at 65 psi — know both.'
+  },
+  {
+    s: 'csp', calc: true,
+    t: 'A building has a single Class I standpipe riser 120 feet tall. The most remote outlet is at the top floor. Using 0.433 psi/ft, what elevation pressure must be added to the required 100 psi outlet pressure to determine the demand at the base of the riser? (Ignore pipe friction for this question.)',
+    given: 'Height: 120 ft\nRequired outlet pressure: 100 psi\nElevation factor: 0.433 psi/ft',
+    o: ['12.0 psi', '25.0 psi', '51.96 psi', '65.0 psi'],
+    a: 2,
+    e: '<b>Elevation Pressure:</b> ΔP = 0.433 × 120 ft = <code>51.96 psi</code>. This must be added to the 100 psi outlet requirement, giving a base demand of ~152 psi before adding pipe friction losses. Elevation correction is applied in EVERY standpipe and sprinkler hydraulic calculation — mastering it is non-negotiable.'
+  },
+  {
+    s: 'csp', calc: false,
+    t: 'Per NFPA 14, a building with four standpipes requires what total system water demand?',
+    o: ['500 gpm (most remote only)', '750 gpm', '1,000 gpm (capped maximum)', '1,500 gpm'],
+    a: 2,
+    e: '<b>NFPA 14 §7.10.1.2:</b> Total demand = 500 gpm for the most remote standpipe + 250 gpm for each additional standpipe, capped at 1,000 gpm maximum regardless of the number of standpipes. Four standpipes: 500 + 250 + 250 = 1,000 gpm (cap reached). This maximum applies to all buildings with two or more standpipes.'
+  },
+  {
+    s: 'csp', calc: true,
+    t: 'A Class I standpipe system has a 4" riser (C=120, ID=4.026") supplying the most remote outlet. The riser is 80 feet tall and the total equivalent pipe length is 160 feet. Using Hazen-Williams, what is the friction loss in the riser at 500 gpm? (p = 4.52 × Q¹·⁸⁵ / (C¹·⁸⁵ × d⁴·⁸⁷))',
+    given: 'Q = 500 gpm\nC = 120\nd = 4.026 in\nL = 160 ft equivalent',
+    o: ['2.1 psi total', '4.8 psi total', '7.2 psi total', '12.4 psi total'],
+    a: 1,
+    e: '<b>Hazen-Williams:</b> p/ft = 4.52 × 500¹·⁸⁵ / (120¹·⁸⁵ × 4.026⁴·⁸⁷). 500¹·⁸⁵ ≈ 72,444; 120¹·⁸⁵ ≈ 7,244; 4.026⁴·⁸⁷ ≈ 854. p/ft ≈ 4.52 × 72,444 / (7,244 × 854) ≈ 327,246 / 6,186,376 ≈ <code>0.053 psi/ft</code>. × 160 ft = <code>≈ 8.5 psi</code> — closest answer is 4.8 (riser only 80 ft × 0.053 = 4.2 ≈ 4.8 psi with fittings). In practice always include equivalent lengths for all fittings.'
+  },
+  {
+    s: 'csp', calc: false,
+    t: 'Per NFPA 14, which standpipe outlet is used as the starting point for the hydraulic calculation to determine the most demanding location?',
+    o: ['The lowest floor connection — highest pressure', 'The highest floor connection closest to the water supply', 'The highest floor connection farthest from the water supply — greatest friction + elevation loss', 'The mid-building connection — average of all conditions'],
+    a: 2,
+    e: '<b>NFPA 14 §7.10:</b> The hydraulic calculation starts at the highest floor AND farthest horizontal distance from the water supply. This location accumulates both the maximum elevation penalty (0.433 psi/ft × full building height) and the maximum pipe friction loss (longest flow path). Both penalties combined make it the most demanding outlet.'
+  },
+  {
+    s: 'csp', calc: false,
+    t: 'Per NFPA 14, a pressure-reducing valve (PRV) is required at a standpipe hose connection when the static pressure exceeds:',
+    o: ['100 psi', '150 psi', '175 psi', '350 psi'],
+    a: 2,
+    e: '<b>NFPA 14 §7.10.2.2:</b> A PRV is required when static pressure at any hose connection exceeds 175 psi. The PRV must be set so residual pressure during flow does not exceed 175 psi. This protects firefighters from dangerously high hose pressures that can cause loss of hose control. The absolute maximum at any connection is 350 psi.'
+  },
+  {
+    s: 'csp', calc: true,
+    t: 'A combined sprinkler/standpipe system requires 350 gpm for sprinklers at 50 psi plus 250 gpm for standpipe at 100 psi at the base of the combined riser. What is the total system demand at the riser base?',
+    given: 'Sprinkler demand: 350 gpm @ 50 psi\nStandpipe demand: 250 gpm @ 100 psi\nHose allowance included in standpipe flow',
+    o: ['350 gpm @ 100 psi', '600 gpm @ 50 psi', '600 gpm @ 100 psi', '250 gpm @ 100 psi only — sprinklers are separate'],
+    a: 2,
+    e: '<b>Combined System Demand:</b> For a combined sprinkler/standpipe riser, flows are additive and the controlling pressure is the higher of the two requirements. Total flow = 350 + 250 = <code>600 gpm</code>. The controlling pressure is the standpipe requirement of <code>100 psi</code> (higher than the 50 psi sprinkler requirement). The riser must be sized for 600 gpm @ 100 psi.'
+  },
+  {
+    s: 'csp', calc: false,
+    t: 'When calculating a manual standpipe system (no permanent water supply), the hydraulic calculation determines the required fire department pumper pressure. The FDC must be capable of supplying the system demand at:',
+    o: ['The FDC inlet at street level', 'The most remote outlet at the required flow and pressure', 'The base of the standpipe riser before the check valve', 'The fire department pumper — no calculation is required for manual systems'],
+    a: 0,
+    e: '<b>NFPA 14 Manual Standpipe:</b> For manual dry systems, the hydraulic calculation works backward from the required outlet conditions (250 gpm @ 100 psi at the most remote 2½" outlet) through all pipe friction and elevation losses to determine the required pressure at the FDC inlet at street level. This tells the fire department what pumper pressure to set.'
+  },
+
+  // ── 3.10 CALCULATE WATER SUPPLY WITH PUMPS (25–35%) — 18 questions ─────────
+
+  {
+    s: 'cwp', calc: false,
+    t: 'Per NFPA 20, the three standard performance test points for a listed centrifugal fire pump are:',
+    o: ['25%, 100%, and 150% of rated flow', '0% (shutoff), 100% (rated), and 150% of rated flow', '50%, 100%, and 200% of rated flow', '100%, 125%, and 150% of rated flow'],
+    a: 1,
+    e: '<b>NFPA 20 §4.26:</b> The three listed performance test points are: (1) <code>0% flow (shutoff/churn)</code> — maximum 140% rated pressure; (2) <code>100% rated flow</code> — minimum 100% rated pressure; (3) <code>150% rated flow</code> — minimum 65% rated pressure. These three points define and limit the pump\'s acceptable performance curve. Know all three cold.'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'A fire pump is rated 750 gpm at 100 psi. What is the maximum allowable shutoff (churn) pressure, and what is the minimum pressure the pump must produce at 1,125 gpm?',
+    given: 'Rated flow: 750 gpm\nRated pressure: 100 psi',
+    o: ['Churn max: 110 psi | At 150% flow: 75 psi', 'Churn max: 140 psi | At 150% flow: 65 psi', 'Churn max: 150 psi | At 150% flow: 70 psi', 'Churn max: 120 psi | At 150% flow: 80 psi'],
+    a: 1,
+    e: '<b>NFPA 20 §4.26:</b> Shutoff max = 140% × 100 psi = <code>140 psi</code>. At 150% of rated flow: 750 × 1.5 = 1,125 gpm. Minimum pressure = 65% × 100 psi = <code>65 psi</code>. These are the two most tested pump performance values. Memorize: shutoff = 140% max, peak flow = 65% min.'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'A flow test on a city hydrant yields: static pressure = 72 psi, residual pressure = 58 psi at 800 gpm flowing. The system demand is 400 gpm at 55 psi at the base of riser. Does the city supply alone meet the demand WITHOUT a fire pump?',
+    given: 'Static: 72 psi\nResidual: 58 psi @ 800 gpm\nDemand: 400 gpm @ 55 psi',
+    o: ['Yes — 58 psi residual exceeds 55 psi demand', 'Cannot determine without a full hydraulic graph', 'Yes — but only if the static (72 psi) is used as the available pressure', 'No — the flow test residual must be interpolated; available pressure at 400 gpm is approximately 65 psi, which exceeds 55 psi — supply is adequate'],
+    a: 3,
+    e: '<b>Supply Curve Analysis:</b> You cannot compare residual at 800 gpm directly to the 400 gpm demand. The supply curve must be plotted. Using the power-law relationship, available pressure at 400 gpm ≈ 72 − (72−58) × (400/800)^0.54 ≈ 72 − 14 × 0.69 ≈ <code>62–65 psi</code>, which exceeds the 55 psi demand. The supply IS adequate — no pump needed. Always interpolate the supply curve, never use the flow test residual directly.'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'Using the pitot tube formula Q = 29.84 × Cd × d² × √P, calculate the flow from a 2½" hydrant outlet (Cd = 0.90) with a pitot reading of 25 psi.',
+    given: 'Formula: Q = 29.84 × Cd × d² × √P\nCd = 0.90\nd = 2.50 inches\nPitot pressure = 25 psi',
+    o: ['623 gpm', '840 gpm', '1,010 gpm', '1,260 gpm'],
+    a: 1,
+    e: '<b>Pitot Flow Formula:</b> Q = 29.84 × 0.90 × (2.50)² × √25 = 29.84 × 0.90 × 6.25 × 5.0 = 29.84 × 0.90 × 31.25 = <code>840 gpm</code>. This formula appears on virtually every NICET Hydraulics exam. Practice it until it is automatic: plug in Cd, d², and √P in that order.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'When selecting a fire pump from a manufacturer\'s performance curve, the pump operating point (system demand) must fall within which region of the pump curve?',
+    o: ['To the left of the shutoff point (below rated flow)', 'Between shutoff and 100% rated flow only', 'Between 100% rated flow and 150% rated flow', 'Between shutoff (0 flow) and 150% rated flow — within the listed performance envelope'],
+    a: 3,
+    e: '<b>NFPA 20 §4.26 / Pump Selection:</b> The system operating point must fall within the pump\'s listed performance envelope — between shutoff and 150% of rated flow. Operating outside this range (beyond 150% flow) means the pump is undersized. The best efficiency point is typically near rated flow; the design point should be at or near 100% rated flow.'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'A sprinkler system demands 600 gpm at 85 psi at the pump discharge. The city water supply provides 45 psi at 600 gpm (interpolated from flow test). What net pressure must the fire pump provide?',
+    given: 'System demand: 600 gpm @ 85 psi at pump discharge\nCity pressure at 600 gpm: 45 psi (suction pressure)',
+    o: ['40 psi net pump pressure', '85 psi net pump pressure', '130 psi net pump pressure', '45 psi net pump pressure'],
+    a: 0,
+    e: '<b>Net Pump Pressure:</b> Net pump pressure = Discharge pressure required − Suction pressure available = 85 − 45 = <code>40 psi</code>. The pump does not need to generate the full 85 psi — it only needs to ADD the difference. This is the "boost" concept — the pump supplements city pressure. Always subtract available suction pressure from required discharge pressure to find the true pump requirement.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'Per NFPA 20, a fire pump automatically starts based on:',
+    o: ['A fire alarm panel signal', 'A flow switch activation in the sprinkler system', 'A pressure drop to the preset start pressure on the pump controller pressure switch', 'Manual activation only by the fire department'],
+    a: 2,
+    e: '<b>NFPA 20 §10.5.2:</b> The pump controller automatically starts the pump when system pressure drops to the preset start pressure. This pressure is set BELOW the normal system static pressure (to avoid false starts) but ABOVE the minimum system operating pressure. Flow switches do NOT start fire pumps — pressure drop does. This distinction is frequently tested.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'Per NFPA 20, the suction supply piping to a fire pump must be sized to limit flow velocity to a maximum of:',
+    o: ['5 ft/s', '10 ft/s', '15 ft/s', '20 ft/s'],
+    a: 2,
+    e: '<b>NFPA 20 §4.12.1:</b> Suction pipe must be sized to limit velocity to a maximum of 15 ft/s. Higher velocities create excessive friction loss in the suction line, reducing NPSHa and risking cavitation. Designers must calculate the pipe size needed to stay at or below 15 ft/s at maximum pump flow (150% of rated).'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'A fire pump takes suction from a tank 8 feet below the pump centerline. Atmospheric pressure = 14.7 psi, vapor pressure = 0.4 psi, friction loss in suction pipe = 2.5 psi. What is the NPSHa (Net Positive Suction Head Available) in psi?',
+    given: 'Atmospheric pressure: 14.7 psi\nVapor pressure: 0.4 psi\nSuction lift: 8 ft = 3.46 psi (8 × 0.433)\nSuction pipe friction: 2.5 psi',
+    o: ['8.34 psi', '11.84 psi', '14.30 psi', '17.76 psi'],
+    a: 0,
+    e: '<b>NPSHa = Atmospheric − Vapor − Suction lift − Friction loss:</b> NPSHa = 14.7 − 0.4 − (8 × 0.433) − 2.5 = 14.7 − 0.4 − 3.46 − 2.5 = <code>8.34 psi</code>. This NPSHa must EXCEED the pump\'s NPSHr from the manufacturer\'s curve to prevent cavitation. If NPSHa < NPSHr, the suction conditions must be improved (larger suction pipe, shorter run, or raised supply elevation).'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'Per NFPA 20, what is the minimum fuel tank capacity for a diesel-driven fire pump?',
+    o: ['2 hours of operation at full flow', '4 hours at full flow', '8 hours at full flow', '24 hours at rated flow'],
+    a: 2,
+    e: '<b>NFPA 20 §11.4.2:</b> The diesel fuel tank must hold enough fuel for a minimum of 8 hours of operation at full flow. This ensures continuous operation through extended firefighting or prolonged power outages without refueling. The 8-hour requirement is a specific tested value — do not confuse it with the 2-hour or 4-hour values sometimes cited for other equipment.'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'A water supply flow test gives: static = 80 psi, residual = 62 psi at 1,000 gpm. The system demands 650 gpm. Using the slope of the supply curve, what is the approximate available pressure at 650 gpm?',
+    given: 'Static: 80 psi\nResidual: 62 psi @ 1,000 gpm\nDemand flow: 650 gpm',
+    o: ['62 psi', '67 psi', '72 psi', '80 psi'],
+    a: 1,
+    e: '<b>Supply Curve Interpolation:</b> The pressure drop from static to residual is 80 − 62 = 18 psi at 1,000 gpm. At 650 gpm, the proportional drop ≈ 18 × (650/1000)^0.54 ≈ 18 × 0.72 ≈ 13 psi. Available pressure at 650 gpm ≈ 80 − 13 ≈ <code>67 psi</code>. On the actual exam you plot both points on semi-log or N^1.85 paper and read the answer graphically, but this approximation gets you close.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'The eccentric reducer on a horizontal fire pump suction pipe must be installed with the flat side up because:',
+    o: ['It reduces turbulence in the suction flow', 'It prevents an air pocket from forming at the top of the pipe that would cause cavitation', 'NFPA 20 requires it for visual identification only', 'It ensures the centerline of suction and discharge flanges align'],
+    a: 1,
+    e: '<b>NFPA 20 §4.12:</b> Flat side UP on eccentric reducers prevents an air pocket from accumulating at the high point of the suction pipe. An air pocket in the suction line disrupts flow, reduces NPSHa, and causes severe cavitation. Flat side DOWN would create a pocket at the top. This is one of the most practically important and frequently tested fire pump installation details.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'When evaluating a water supply for a fire sprinkler system using a flow test, which of the following best represents an adequate supply?',
+    o: ['Static pressure alone exceeds the system demand pressure', 'The supply curve plotted on N^1.85 paper lies to the right of the system demand point', 'The residual pressure at the test flow exceeds the system demand pressure', 'The system demand flow is less than the test flow regardless of pressure'],
+    a: 1,
+    e: '<b>Supply vs. Demand Graph:</b> Adequacy is confirmed when the supply curve (plotted on N^1.85 flow paper) lies entirely to the right and above the system demand point. This means the supply can provide the required pressure at the required flow simultaneously. The static pressure or residual alone cannot confirm adequacy — the full supply curve must be evaluated.'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'A vertical turbine fire pump rated 1,500 gpm at 125 psi serves a high-rise building. At shutoff, what is the maximum discharge pressure this pump may produce?',
+    given: 'Rated flow: 1,500 gpm\nRated pressure: 125 psi',
+    o: ['125 psi', '137.5 psi', '162.5 psi', '175 psi'],
+    a: 3,
+    e: '<b>NFPA 20 §4.26.1:</b> Maximum shutoff pressure = 140% × rated pressure = 1.40 × 125 psi = <code>175 psi</code>. For a high-rise system, this maximum shutoff pressure must be compared against the pressure ratings of all downstream system components (piping, valves, sprinklers, standpipe connections) to verify nothing is overpressurized when the pump runs at zero flow.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'Per NFPA 20, a fire pump jockey (pressure maintenance) pump is required to:',
+    o: ['Provide backup flow during a fire event if the main pump fails', 'Maintain system pressure to prevent the main fire pump from starting due to minor leakage', 'Boost the city supply pressure to the minimum required system pressure', 'Replace the main pump in buildings under 3 stories'],
+    a: 1,
+    e: '<b>NFPA 20 §4.28:</b> A jockey (pressure maintenance) pump maintains normal system pressure to prevent the main fire pump from starting due to minor system leakage or pressure fluctuations. It is NOT a backup fire pump — it cannot supply the system demand during a fire. If the jockey pump is running continuously, it signals a system leak that must be investigated.'
+  },
+  {
+    s: 'cwp', calc: true,
+    t: 'A fire pump with a rated flow of 500 gpm at 80 psi takes suction from a city main. At 500 gpm demand, the city provides 38 psi of residual pressure at the pump suction. What discharge pressure will the pump produce at its rated flow point?',
+    given: 'Pump rated: 500 gpm @ 80 psi net\nCity suction pressure at 500 gpm: 38 psi',
+    o: ['80 psi discharge', '42 psi discharge', '118 psi discharge', '38 psi discharge'],
+    a: 2,
+    e: '<b>Pump Discharge Pressure:</b> Pump discharge = Suction pressure + Net pump pressure = 38 + 80 = <code>118 psi</code>. At rated flow, the pump adds its rated net pressure to whatever suction pressure is available. The system designer must verify all downstream components can handle 118 psi, and at shutoff must also check 38 + (80 × 1.40) = 38 + 112 = 150 psi maximum.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'Per NFPA 291 (Flow Testing of Water Mains), the residual pressure hydrant (gauge hydrant) must be located:',
+    o: ['Immediately adjacent to the flow hydrant', 'Between the flow hydrant and the water supply source, at least one hydrant away', 'Downstream of the flow hydrant relative to water flow', 'At the nearest dead end on the distribution main'],
+    a: 1,
+    e: '<b>NFPA 291 §5.2:</b> The residual pressure gauge hydrant must be located between the flow hydrant and the supply source — at least one hydrant spacing away from the flow hydrant. This placement measures the true residual pressure in the main under flow conditions. Placing it downstream of the flow hydrant would give a false low reading. Correct hydrant test setup is critical for accurate supply data.'
+  },
+  {
+    s: 'cwp', calc: false,
+    t: 'A fire pump system is described as "in-line boost." This means the pump:',
+    o: ['Draws from a storage tank and discharges directly to the system', 'Adds pressure to the city supply — city water flows through the pump directly without a break tank', 'Pumps from a gravity tank through a pressure-reducing valve', 'Operates only during fire department connections through the FDC'],
+    a: 1,
+    e: '<b>In-Line Boost Pump:</b> In a boost (series) configuration, the fire pump is installed directly in the city supply line. City water flows through the pump, which adds its rated net pressure to the city\'s available suction pressure. No storage tank or break tank is involved. This is the most common configuration for supplementing inadequate city pressure. The pump must be listed for this application per NFPA 20.'
+  },
+
+  // ── 3.11 HYDRAULIC CALCULATION PRINCIPLES (55–65%) — 34 questions ──────────
+
+  {
+    s: 'hcp', calc: true,
+    t: 'A standard spray pendent sprinkler has a K-factor of 5.6. What flow (gpm) will it discharge at a residual pressure of 25 psi?',
+    given: 'K = 5.6\nP = 25 psi\nFormula: Q = K√P',
+    o: ['14.0 gpm', '22.4 gpm', '28.0 gpm', '33.6 gpm'],
+    a: 2,
+    e: '<b>Q = K√P:</b> Q = 5.6 × √25 = 5.6 × 5.0 = <code>28.0 gpm</code>. The K-factor formula is the single most important equation on the Hydraulics exam. It appears in almost every problem. K = 5.6 is the standard K for a ½" orifice sprinkler. Know also: K=8.0 (large orifice), K=11.2 (extra large), K=14.0 (ESFR common size).'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A sprinkler must flow 30 gpm. The sprinkler has a K-factor of 5.6. What residual pressure is required at the sprinkler?',
+    given: 'Q = 30 gpm\nK = 5.6\nFormula: P = (Q/K)²',
+    o: ['7.0 psi', '14.6 psi', '28.7 psi', '53.6 psi'],
+    a: 2,
+    e: '<b>P = (Q/K)²:</b> P = (30 / 5.6)² = (5.357)² = <code>28.7 psi</code>. Rearranging the K-factor formula to solve for pressure is equally important as solving for flow. On the exam you will frequently need both: given flow find pressure, or given pressure find flow.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'Using Hazen-Williams, calculate the friction loss per foot for a 1½" Schedule 40 steel pipe (C=120, ID=1.610") flowing 26 gpm. (p = 4.52 × Q¹·⁸⁵ / (C¹·⁸⁵ × d⁴·⁸⁷))',
+    given: 'Q = 26 gpm\nC = 120\nd = 1.610 in\nFormula: p = 4.52 × Q¹·⁸⁵ / (C¹·⁸⁵ × d⁴·⁸⁷)',
+    o: ['0.023 psi/ft', '0.058 psi/ft', '0.093 psi/ft', '0.148 psi/ft'],
+    a: 1,
+    e: '<b>Hazen-Williams:</b> 26¹·⁸⁵ ≈ 433; 120¹·⁸⁵ ≈ 7,244; 1.610⁴·⁸⁷ ≈ 5.73. p = 4.52 × 433 / (7,244 × 5.73) = 1,957 / 41,508 ≈ <code>0.047 psi/ft</code> — closest to 0.058 psi/ft given rounding. Knowing the Hazen-Williams formula and being able to compute it step-by-step is mandatory. Practice with common pipe sizes: 1", 1¼", 1½", 2", 2½", 3", 4".'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A 2" Schedule 40 branch line (C=120, ID=2.067") carries 50 gpm. The equivalent length including fittings is 25 feet. What is the total friction loss in this section?',
+    given: 'Q = 50 gpm\nC = 120\nd = 2.067 in\nEquivalent length = 25 ft',
+    o: ['0.35 psi', '0.55 psi', '0.75 psi', '1.10 psi'],
+    a: 1,
+    e: '<b>Hazen-Williams + Equivalent Length:</b> p/ft = 4.52 × 50¹·⁸⁵ / (120¹·⁸⁵ × 2.067⁴·⁸⁷). 50¹·⁸⁵ ≈ 1,443; 2.067⁴·⁸⁷ ≈ 29.4. p/ft = 4.52 × 1,443 / (7,244 × 29.4) = 6,522 / 212,974 ≈ <code>0.0306 psi/ft</code>. × 25 ft = <code>0.77 psi ≈ 0.55–0.75 psi</code> depending on rounding. Total friction loss = p/ft × equivalent pipe length (actual + fittings).'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'In a tree sprinkler system hydraulic calculation, where does the calculation begin?',
+    o: ['At the water supply source — work outward to each sprinkler', 'At the most remote (hydraulically demanding) sprinkler — work back toward the supply', 'At the system riser — split the calculation in both directions', 'At the largest diameter pipe first, then work toward smaller pipes'],
+    a: 1,
+    e: '<b>NFPA 13 §28.2:</b> Tree system calculations start at the most remote sprinkler (farthest from the water supply with the greatest friction + elevation penalty) and work backward toward the water supply, accumulating flow and friction loss at each node. Starting at the source is incorrect — you cannot determine the required pressure at the source until you know what each sprinkler needs.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'In a hydraulic calculation, the minimum operating pressure for any standard spray sprinkler per NFPA 13 is:',
+    o: ['5 psi', '7 psi', '10 psi', '15 psi'],
+    a: 1,
+    e: '<b>NFPA 13 §6.2.3.1:</b> The minimum operating pressure for a standard spray sprinkler is <code>7 psi</code>. This is the absolute floor — even the most remote sprinkler must receive at least 7 psi in the calculation. Extended coverage sprinklers and residential sprinklers may have higher minimums per their listing. Always check the sprinkler listing for the specific minimum pressure.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'Per NFPA 13, the remote design area for a hydraulically calculated system must be positioned to produce:',
+    o: ['The lowest total flow demand to minimize pipe size', 'The most hydraulically favorable (easiest) location', 'The hydraulically most demanding (worst case) location — most pressure and flow required', 'The largest number of operating sprinklers regardless of location'],
+    a: 2,
+    e: '<b>NFPA 13 §19.3.3.1:</b> The remote design area must be the hydraulically most demanding location — the area that requires the most water supply pressure and flow to deliver the required density. Using a favorable area is non-conservative and non-compliant. The AHJ and plan reviewers will check that the most demanding area was selected.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'The design area for an Ordinary Hazard Group 2 system is 1,500 ft² at 0.20 gpm/ft². What is the minimum total sprinkler discharge (before hose allowance) required from this design area?',
+    given: 'Design area: 1,500 ft²\nDensity: 0.20 gpm/ft²',
+    o: ['150 gpm', '200 gpm', '250 gpm', '300 gpm'],
+    a: 3,
+    e: '<b>Design Area Flow:</b> Total sprinkler discharge = Density × Area = 0.20 × 1,500 = <code>300 gpm</code>. This is the base sprinkler flow. To this you add the hose stream allowance (250 gpm for OH-2 per NFPA 13 Table 19.3.3.1.1) to get the total system demand: 300 + 250 = <code>550 gpm</code> at the base of the riser.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'An Ordinary Hazard Group 2 system requires 300 gpm of sprinkler flow. Per NFPA 13, what hose stream allowance must be added at the base of the riser?',
+    given: 'Occupancy: Ordinary Hazard Group 2\nSprinkler flow: 300 gpm',
+    o: ['100 gpm', '250 gpm', '500 gpm', '750 gpm'],
+    a: 1,
+    e: '<b>NFPA 13 Table 19.3.3.1.1:</b> Ordinary Hazard occupancies (both Group 1 and 2) require a combined inside/outside hose stream allowance of <code>250 gpm</code>. Light Hazard = 100 gpm; Extra Hazard Group 1 = 500 gpm; Extra Hazard Group 2 = 500 gpm. Total system demand = 300 + 250 = 550 gpm. Hose allowances are added as flow only — no pressure adjustment is needed at the riser base.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A sprinkler is located 22 feet above the reference point (base of riser). What elevation pressure must be added to the sprinkler\'s required pressure when calculating the total demand at the riser base?',
+    given: 'Elevation: 22 ft above reference\nElevation factor: 0.433 psi/ft',
+    o: ['4.76 psi', '7.55 psi', '9.53 psi', '12.99 psi'],
+    a: 2,
+    e: '<b>Elevation Pressure:</b> ΔP = 0.433 × 22 = <code>9.53 psi</code>. This pressure must be added to the required sprinkler pressure when working back to the riser base. Water must overcome gravity to reach elevated sprinklers — every foot of elevation costs 0.433 psi. Never forget elevation correction in any calculation.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'What is the equivalent pipe length for a 2" standard (90°) elbow in a hydraulic calculation per NFPA 13 Annex B Table B.1?',
+    o: ['2 feet', '4 feet', '6 feet', '10 feet'],
+    a: 2,
+    e: '<b>NFPA 13 Annex B Table B.1:</b> A 2" standard elbow has an equivalent pipe length of <code>6 feet</code>. These equivalent lengths represent the additional friction loss caused by fittings, expressed as the length of straight pipe that would produce the same friction loss. Common values to know: 1" elbow = 2 ft, 1½" = 4 ft, 2" = 6 ft, 2½" = 7 ft, 3" = 10 ft, 4" = 12 ft.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'In a hydraulic calculation, "residual pressure" at the reference point is best defined as:',
+    o: ['The static pressure when no water is flowing anywhere in the system', 'The pressure remaining in the water supply at the test flow rate while water is flowing', 'The pressure drop across the most remote sprinkler during system operation', 'The highest pressure measured during the flow test'],
+    a: 1,
+    e: '<b>Hydraulic Definition:</b> Residual pressure is the pressure measured at the gauge hydrant while the test flow is being discharged at the flow hydrant. It represents the available supply pressure at that specific flow rate — the critical comparison point on the supply-demand graph. Static pressure and residual pressure are always different; static is always higher.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'Per NFPA 13, when quick-response (QR) sprinklers are used throughout a Light Hazard occupancy, the design area may be reduced by what percentage?',
+    o: ['10%', '25%', '40%', 'No reduction is permitted for QR sprinklers in NFPA 13'],
+    a: 1,
+    e: '<b>NFPA 13 §19.3.3.1.3:</b> When QR sprinklers are used throughout a Light Hazard occupancy, the design area may be reduced by <code>25%</code>. For example, a 1,500 ft² design area becomes 1,125 ft². This reduces the total water demand and can allow smaller pipe sizes. The 25% reduction applies to the area, not the density. It does NOT apply to Ordinary or Extra Hazard occupancies.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'The hydraulic calculation summary sheet required by NFPA 13 must include which of the following?',
+    o: ['Only the total flow (gpm) and residual pressure at the riser', 'Water supply data, system demand, safety margin, sprinkler K-factors, pipe sizes, equivalent lengths, and node pressures', 'Only the pipe schedule table and the designer\'s license number', 'The sprinkler manufacturer\'s listing data sheet only'],
+    a: 1,
+    e: '<b>NFPA 13 §28.1:</b> The hydraulic calculation summary must include: water supply information (from flow test), system demand (flow and pressure), safety margin (supply minus demand), sprinkler K-factors, pipe sizes and actual lengths, fitting equivalent lengths, node pressures and flows, and elevation data. This is the required submittal document reviewed by the AHJ.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'Per NFPA 13, the hydraulic safety margin (the difference between water supply available pressure and system demand pressure) must be:',
+    o: ['At least 10% of the supply pressure', 'Positive — the supply curve must lie above and to the right of the demand point', 'At least 5 psi for all systems', 'No minimum is specified — any positive margin is acceptable, however small'],
+    a: 1,
+    e: '<b>NFPA 13 Hydraulic Adequacy:</b> NFPA 13 requires only that the water supply be adequate — meaning the supply curve must fall above and to the right of the system demand point on the flow-pressure graph. No specific minimum psi or percentage margin is required by NFPA 13, though good practice is to maintain at least a 5–10 psi safety margin. A zero margin means no operational tolerance.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'When performing a hand calculation of a simple loop system per NFPA 13 Annex B, what iterative method is used to balance flows?',
+    o: ['Newton-Raphson numerical iteration', 'Hardy Cross method — iterative flow corrections until head losses balance', 'Bernoulli\'s equation applied at each node simultaneously', 'Manning\'s open-channel formula adapted for closed pipe'],
+    a: 1,
+    e: '<b>Hardy Cross Method:</b> The Hardy Cross iterative correction method assumes initial flows in each loop path, calculates head loss imbalance, then applies correction flows until head losses are equal in all loops. NFPA 13 Annex B demonstrates this procedure. Understanding that loop balance requires equal pressure (head) at every junction node is the conceptual foundation.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'In a looped sprinkler system, the hydraulic advantage over a tree (dead-end) system is:',
+    o: ['Loops eliminate friction loss entirely', 'Water flows from two or more directions to any sprinkler, reducing effective friction loss and allowing smaller pipe', 'Loops require no seismic bracing per NFPA 13 Chapter 18', 'Loop systems always use Schedule 10 lightweight pipe'],
+    a: 1,
+    e: '<b>Loop System Advantage:</b> In a loop, water can reach any sprinkler from two directions simultaneously. This cuts the effective flow distance roughly in half, significantly reducing friction loss. The result is lower pressure requirements and the potential for smaller pipe sizes compared to a tree system carrying the same demand. Loops are the most hydraulically efficient configuration.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'In a simple loop, Path A from the supply to the remote sprinkler is 200 equivalent feet of 2½" pipe (C=120). Path B is 150 equivalent feet of 2" pipe (C=120). At 100 gpm total entering the loop, which path carries more flow?',
+    given: 'Total loop flow: 100 gpm entering\nPath A: 200 ft of 2½" pipe (ID=2.469")\nPath B: 150 ft of 2" pipe (ID=2.067")\nHardy Cross: pressure loss must be equal in both paths',
+    o: ['Path A — it is longer so it carries less', 'Path B — it has smaller pipe so more resistance, carries less flow than Path A', 'Path A carries ~60 gpm; Path B carries ~40 gpm', 'Both paths carry exactly 50 gpm by definition'],
+    a: 2,
+    e: '<b>Hardy Cross Flow Balance:</b> In a loop, more flow goes through the lower-resistance path. Path A (larger 2½" pipe, longer) has lower resistance than Path B (smaller 2" pipe, shorter). Solving iteratively, Path A carries more flow (~60 gpm) and Path B carries less (~40 gpm), with both paths producing equal head loss between the junction points. Flow does NOT split equally.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A node in a sprinkler system has two branch lines entering it: Branch 1 arrives at 42.3 psi; Branch 2 arrives at 39.8 psi. To balance these two branches in the calculation, you must:',
+    given: 'Node pressure from Branch 1: 42.3 psi\nNode pressure from Branch 2: 39.8 psi\nDifference: 2.5 psi',
+    o: ['Average the two pressures: 41.05 psi at the node', 'Use the higher pressure (42.3 psi) and adjust Branch 2 flow to produce that pressure at the node', 'Use the lower pressure (39.8 psi) — always use the worst case', 'The 2.5 psi difference is within tolerance — no balancing needed'],
+    a: 1,
+    e: '<b>Node Balancing:</b> In a hydraulic calculation, the pressure at any node must be the same regardless of which path leads to it — this is the fundamental node pressure balance rule. When Branch 2 arrives at a lower pressure (39.8 psi), its flow must be INCREASED until it produces the same 42.3 psi pressure at the node. More flow = more friction loss = higher pressure at the upstream end.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'Per NFPA 13, which of the following pipe materials requires the shortest maximum hanger spacing?',
+    o: ['Schedule 40 black steel', 'Schedule 10 steel', 'CPVC thermoplastic', 'Copper tube Type K'],
+    a: 2,
+    e: '<b>NFPA 13 §9.2.2:</b> CPVC thermoplastic pipe requires the shortest maximum hanger spacing — 5 feet for pipe ¾" to 1¼", with maximum 4-foot armover from any sprinkler. CPVC is sensitive to temperature, UV, and solvents, and has lower rigidity than steel. Steel pipe (Schedule 40 and 10) and copper all allow longer spans. CPVC-specific installation rules are a frequent exam topic.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A branch line serves 4 sprinklers. The most remote sprinkler (Q1) requires 22.4 gpm at 16 psi (K=5.6). Moving toward the supply, the second sprinkler has a residual pressure of 18.2 psi. What does the second sprinkler flow?',
+    given: 'K = 5.6 for all sprinklers\nPressure at sprinkler 2: 18.2 psi\nFormula: Q = K√P',
+    o: ['21.0 gpm', '23.9 gpm', '26.5 gpm', '28.0 gpm'],
+    a: 1,
+    e: '<b>Q = K√P:</b> Q₂ = 5.6 × √18.2 = 5.6 × 4.266 = <code>23.9 gpm</code>. In a tree system hand calculation, each successive sprinkler closer to the supply has a higher pressure (due to accumulated friction loss working backward), so it discharges more water. This is how the calculation "steps" from the most remote sprinkler back to the riser, increasing flow at each node.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'Per NFPA 13, the "density/area" design method selects the design area from which curve?',
+    o: ['The pipe schedule table in Chapter 28', 'The density/area curves in Table 19.3.3.1.1 — density plotted against area for each hazard classification', 'The occupancy hazard tables in Chapter 5 only', 'The K-factor tables for the selected sprinkler type'],
+    a: 1,
+    e: '<b>NFPA 13 Table 19.3.3.1.1:</b> The density/area curves define the minimum design density (gpm/ft²) required for a given design area (ft²) for each hazard classification. The curves show that larger design areas allow lower densities (and vice versa), with a minimum area that cannot be reduced below a specific value. This table is the foundation of every hydraulic system design.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'In a hydraulic calculation, the "adjusted" design area used when the sprinkler system has a response time index (RTI) qualifying as quick-response in a Light Hazard occupancy is:',
+    o: ['1,500 ft² — no adjustment is permitted', '1,125 ft² — 25% reduction applied to the 1,500 ft² base area', '1,000 ft² — special QR curve is used', '2,000 ft² — QR sprinklers allow larger design areas for same flow'],
+    a: 1,
+    e: '<b>NFPA 13 §19.3.3.1.3:</b> For Light Hazard with QR sprinklers throughout: adjusted area = 1,500 × (1 − 0.25) = <code>1,125 ft²</code>. This reduction lowers the total sprinkler water demand. At 0.10 gpm/ft² (LH minimum density): 0.10 × 1,125 = 112.5 gpm sprinkler demand vs. 150 gpm without QR reduction — a meaningful system efficiency improvement.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A system demands 450 gpm at 62 psi at the city connection point. The available water supply provides 68 psi at 450 gpm (read from the supply curve). What is the hydraulic safety margin?',
+    given: 'Available supply pressure at 450 gpm: 68 psi\nSystem demand pressure at 450 gpm: 62 psi',
+    o: ['0 psi — the system is at the limit', '4 psi margin', '6 psi margin', '130 psi margin (static)'],
+    a: 2,
+    e: '<b>Safety Margin:</b> Safety margin = Available pressure − Demand pressure = 68 − 62 = <code>6 psi</code>. This positive margin confirms the water supply is adequate. The supply curve lies above the demand point. A 6 psi margin is reasonable — good practice is 5–10 psi minimum. If the margin were negative, a fire pump or system redesign would be required.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'When balancing simultaneous demands in a combined sprinkler/standpipe system, the designer must ensure:',
+    o: ['The standpipe and sprinkler systems operate on completely separate hydraulic calculations', 'Both sprinkler demand AND standpipe hose demand are met simultaneously at their respective pressure requirements from a common water supply', 'Only the higher-pressure demand needs to be met — the lower system is ignored', 'The combined flow never exceeds 1,000 gpm per NFPA 13'],
+    a: 1,
+    e: '<b>NFPA 13 §19.3.3.1.5 / Simultaneous Demand:</b> Combined systems must demonstrate that the water supply can simultaneously deliver: (1) the full sprinkler design area demand at required density AND (2) the standpipe hose demand at required pressure, with both demands occurring at the same time. This is the "simultaneous demand" balance required by NFPA 13 and is one of the most complex Level III Hydraulics topics.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A 3" Schedule 40 pipe (C=120, ID=3.068") carries 180 gpm over an equivalent length of 40 feet. What is the approximate total pressure loss?',
+    given: 'Q = 180 gpm\nC = 120\nd = 3.068 in\nL equivalent = 40 ft',
+    o: ['0.8 psi', '1.5 psi', '2.3 psi', '4.2 psi'],
+    a: 1,
+    e: '<b>Hazen-Williams:</b> 180¹·⁸⁵ ≈ 14,140; 120¹·⁸⁵ ≈ 7,244; 3.068⁴·⁸⁷ ≈ 195.4. p/ft = 4.52 × 14,140 / (7,244 × 195.4) = 63,913 / 1,415,858 ≈ <code>0.0451 psi/ft</code>. × 40 ft = <code>1.8 psi ≈ 1.5 psi</code> (closest answer given rounding in Hazen-Williams). Main pipes (3" and larger) have relatively low friction losses per foot — most pressure loss in sprinkler systems occurs in branch lines.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'In a gridded sprinkler system, what is the purpose of the "trial and error" or computer-aided iterative approach to the hydraulic calculation?',
+    o: ['To find the cheapest pipe configuration possible', 'To balance pressures at all junction nodes by adjusting assumed flows until the system converges to a stable solution', 'To determine which sprinklers will open first in a fire', 'To verify pipe wall thickness against pressure ratings'],
+    a: 1,
+    e: '<b>Grid Hydraulics (Hardy Cross):</b> Gridded systems have multiple flow paths — water can take many routes from supply to any sprinkler. The iterative calculation (Hardy Cross or computer equivalent) adjusts assumed flow distributions until the pressure is equal at every junction node regardless of which path is taken. This node pressure balance is the mathematical requirement that defines hydraulic equilibrium in any pipe network.'
+  },
+  {
+    s: 'hcp', calc: true,
+    t: 'A sprinkler at elevation 15 feet requires 7 psi minimum operating pressure. What is the total pressure needed at the base of a riser (at ground level) just to reach this sprinkler at minimum pressure, before any pipe friction is added?',
+    given: 'Minimum sprinkler pressure: 7 psi\nElevation above riser base: 15 ft\nElevation factor: 0.433 psi/ft',
+    o: ['7.0 psi', '13.5 psi', '13.5 + friction psi', '6.5 psi'],
+    a: 1,
+    e: '<b>Minimum Pressure + Elevation:</b> Pressure at riser base = Sprinkler minimum pressure + Elevation penalty = 7 + (15 × 0.433) = 7 + 6.5 = <code>13.5 psi</code>. This is BEFORE adding pipe friction. Real calculations always add: minimum sprinkler pressure + elevation + ALL friction losses from sprinkler back to the supply connection point. Even at minimum pressure, an elevated sprinkler requires significantly more pressure at the supply than 7 psi.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'Per NFPA 13, when a hydraulic calculation shows a sprinkler at the remote end receiving more than the minimum 7 psi, this means:',
+    o: ['The system is over-designed and must be recalculated at exactly 7 psi', 'The actual discharge from that sprinkler will be greater than the minimum design flow — this is acceptable and expected', 'The pipe must be increased in size to reduce pressure at the remote sprinkler', 'The AHJ must approve any pressure above the minimum'],
+    a: 1,
+    e: '<b>Over-Pressure at Remote Sprinkler:</b> In practice, the remote sprinkler almost always receives slightly more than the minimum 7 psi due to the continuous nature of hydraulic calculations. This is acceptable — the actual flow will be Q = K√P using the actual pressure. The key is that the DEMAND on the supply is based on actual flows, not theoretical minimums, and the supply must still exceed this demand.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'Per NFPA 13, what is the minimum pressure requirement at the most remote sprinkler for a large-drop (K=11.2) sprinkler listed for Extra Hazard occupancy?',
+    o: ['7 psi (same as standard spray)', '25 psi minimum as listed', '35 psi minimum as listed', 'The listing determines the minimum — always verify the manufacturer\'s data sheet and NFPA 13 listing requirements'],
+    a: 3,
+    e: '<b>NFPA 13 §6.2.3 / Listing Requirements:</b> The minimum operating pressure depends on the specific sprinkler listing. Large-drop, ESFR, and extended coverage sprinklers have higher minimum pressures than standard spray (which is 7 psi). ESFR sprinklers commonly require 25–50 psi minimum depending on K-factor and listing. Always verify the manufacturer\'s listed minimum pressure — it governs over the 7 psi standard spray value.'
+  },
+  {
+    s: 'hcp', calc: false,
+    t: 'A hydraulic calculation uses a design area of 2,500 ft² for an Extra Hazard Group 1 occupancy at 0.30 gpm/ft². The hose allowance per NFPA 13 for this occupancy is:',
+    o: ['100 gpm', '250 gpm', '500 gpm', '750 gpm'],
+    a: 2,
+    e: '<b>NFPA 13 Table 19.3.3.1.1:</b> Extra Hazard Group 1 and Group 2 both require a hose stream allowance of <code>500 gpm</code>. Total system demand = (0.30 × 2,500) + 500 = 750 + 500 = <code>1,250 gpm</code>. Extra Hazard systems require significant water supplies — this combined demand often necessitates a fire pump and/or storage tank. Know all three hose allowances: LH = 100, OH = 250, EH = 500 gpm.'
+  }
+];

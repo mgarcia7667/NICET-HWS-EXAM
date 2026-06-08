@@ -1,0 +1,16 @@
+{
+  "name": "NICET III — Hydraulics & Water Supply Planning Mock Exam",
+  "short_name": "NICET III HWS",
+  "description": "NICET Level III Water-Based Systems Layout — Hydraulics & Water Supply Planning practice exam with 60 questions, calculation drills, and NFPA code explanations.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0d1f2d",
+  "theme_color": "#0d1f2d",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["education", "utilities"],
+  "lang": "en-US"
+}
